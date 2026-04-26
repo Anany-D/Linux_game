@@ -743,19 +743,18 @@ RULES:
 - Tie Linux concepts to pirate/nautical metaphors`;
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        system: systemPrompt,
-        messages: parrotChatHistory
-      })
-    });
+    const response = await fetch("/api/parrot", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+        message: systemPrompt + "\nUser: " + userText
+    }),
+});
 
-    const data = await response.json();
-    const replyText = data.content?.[0]?.text || "Squawk! The storm jammed me signal! Try again, matey! 🦜";
+const data = await response.json();
+const replyText = data.reply || "Squawk! Polly lost her words 🦜";
 
     // Remove typing indicator
     if(typingEl) typingEl.remove();
