@@ -21,13 +21,21 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    const reply =
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "Squawk! Polly is confused 🦜";
+    // 🔍 DEBUG (temporary)
+    console.log("Gemini response:", JSON.stringify(data));
+
+    let reply = "Squawk! Polly is confused 🦜";
+
+    if (data.candidates && data.candidates.length > 0) {
+      reply = data.candidates[0].content.parts[0].text;
+    } else if (data.error) {
+      reply = "Squawk! API error: " + data.error.message;
+    }
 
     res.status(200).json({ reply });
 
   } catch (error) {
-    res.status(500).json({ error: "Parrot backend failed 🦜" });
+    console.error(error);
+    res.status(500).json({ reply: "Parrot backend failed 🦜" });
   }
 }
